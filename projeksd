@@ -1,0 +1,173 @@
+def pause():
+    input("Press Enter to continue...")
+
+def input_berwarna(pesan):
+    print(pesan, end='\033[92m')
+    hasil = input()
+    print('\033[0m', end='')
+    return hasil
+
+def input_integer(pesan):
+        hasil = input_berwarna(pesan)
+        if not hasil.isdigit():
+            return input_integer(pesan)
+        
+        return int(hasil)
+
+class node:
+    def __init__(self, data = None):
+        self.data = data
+        self.next = None
+
+class LinkedList:
+    def __init__(self):
+        self.head = node()
+        
+    def append(self, data):
+        new_node = node(data)
+        cur = self.head
+        while cur.next!=None:
+            cur = cur.next
+        cur.next = new_node
+
+    def delete(self, key):
+        cur = self.head
+
+        if key == None:
+            return False
+
+        while cur is not None: 
+            if (cur.data == key):
+                self.head = cur.next
+                return True
+
+            prev = cur
+            cur = cur.next
+            if cur is not None:
+                if (cur.data == key):
+                    prev.next = cur.next
+                    return True 
+            
+        return False 
+
+    def find(self, key):
+        current = self.head
+        while current is not None:
+            if (current.data == key):
+                return current.data
+            current = current.next
+
+        return None
+    
+    def length(self):
+        cur = self.head
+        total = 0
+        while cur.next!=None:
+            total += 1
+            cur = cur.next
+        return total
+    
+    def display(self):
+        elemens = []
+        cur_node = self.head
+        while cur_node.next!=None:
+            cur_node = cur_node.next
+            elemens.append(cur_node.data)
+        print(elemens)
+
+class Menu():
+    def __init__(self, judul, list_menu):
+        self.title = judul
+        self.array = list_menu 
+
+    def main_menu_show(self):
+        print(self.title)
+        print("=============================")
+
+        for index, entry in enumerate(self.array):
+            print("{}. {}".format(index + 1, entry[0]))
+            
+        print("=============================")
+
+    def pemilihan_main_menu(self):
+        pilihan = input_integer("Silahkan masukkan pilihan anda: ")
+
+        if pilihan <= 0 or pilihan > len(self.array):  
+            return self.pemilihan_main_menu()
+        
+        entry = self.array[pilihan-1]
+        
+        return entry[1]()
+
+    def show(self):
+        self.main_menu_show()
+    
+        self.pemilihan_main_menu()
+
+
+
+my_list = LinkedList()
+
+def menu_insert_data():
+    data = input_berwarna("Masukkan data yang ingin anda tambahkan: ")
+
+    my_list.append(data)
+
+    print("Data berhasil dimasukkan: {}".format(data))
+
+    pause()
+    menu()
+
+def menu_delete_data():
+    data = input_berwarna("Masukkan data yang ingin anda hapus: ")
+
+    if not my_list.find(data):
+        print("Tidak dapat menemukan data yang ingin dihapus")
+    else:
+        print("Apakah anda yakin ingin menghapus data: '{}' (Y/N)".format(data))
+        if input().lower() == 'y':
+            if my_list.delete(data):
+                print("Data berhasil dihapus: '{}'".format(data))
+            else:
+                print("Gagal menghapus data! terjadi kesalahan dalam kode.")
+
+    pause()
+    menu()
+
+def menu_cari_data():
+    data = input_berwarna("Masukkan data yang ingin anda cari: ")
+
+    temuan = my_list.find(data)
+    if temuan == None:
+        print("Tidak dapat menemukan data tersebut")
+    else:
+        print("Data dapat ditemukan: '{}'".format(temuan))
+
+    pause()
+    menu()
+
+def menu_jumlah_data():
+    print("Jumlah data: {}".format(my_list.length()))
+    pause()
+    menu()
+
+def tampil_data():
+    print("Seluruh data yang ada dalam LinkedList:")
+    my_list.display()
+    pause()
+    menu()
+
+array_main_menu = [
+    [ "Insert data", menu_insert_data ],
+    [ "Delete data", menu_delete_data ],
+    [ "Cari data", menu_cari_data ],
+    [ "Panjang dari linked list", menu_jumlah_data ],
+    [ "Tampil data", tampil_data ],
+]
+
+menu_utama = Menu("Menu Aplikasi Linked List", array_main_menu)
+
+def menu():
+    menu_utama.show()
+
+menu()
